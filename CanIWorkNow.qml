@@ -28,6 +28,8 @@ Panel {
     property string refreshState: "idle"
     property string shareState: "idle"
     property bool announceRefresh: false
+    property bool announceShare: false
+    property bool shareCompleted: false
 
     readonly property bool hasKnownStatus: checkedAt !== "" && services.length > 0
     readonly property string verdictIcon: verdictGlyph(answer)
@@ -69,8 +71,14 @@ Panel {
     }
 
     function finishShare(state) {
+        shareCompleted = true;
         shareState = state;
         shareStateTimer.restart();
+        if (announceShare) {
+            var message = state === "copied" ? "Latest permalink copied" : "Could not copy the latest permalink";
+            Quickshell.execDetached(["omarchy-notification-send", "Can I Work Now?", message]);
+        }
+        announceShare = false;
     }
 
     function applyStatus(raw) {
@@ -106,10 +114,11 @@ Panel {
         statusProcess.running = true;
     }
 
-    function shareLatest() {
+    function shareLatest(showNotification) {
         if (shareProcess.running)
             return;
-        shareState = "sharing";
+        announceShare = showNotification === true;
+        shareCompleted = false;
         shareProcess.running = true;
     }
 
@@ -224,7 +233,7 @@ Panel {
         }
 
         onExited: function (exitCode) {
-            if (exitCode !== 0 && root.shareState === "sharing")
+            if (exitCode !== 0 && !root.shareCompleted)
                 root.finishShare("error");
         }
     }
@@ -241,7 +250,7 @@ Panel {
 
         onPressed: function (buttonCode) {
             if (buttonCode === Qt.RightButton)
-                root.shareLatest();
+                root.shareLatest(true);
             else if (buttonCode === Qt.MiddleButton)
                 root.refresh(true);
             else
@@ -270,7 +279,7 @@ Panel {
                 if (text === "r" || text === "R")
                     root.refresh(true);
                 else if (text === "s" || text === "S")
-                    root.shareLatest();
+                    root.shareLatest(false);
             }
 
             Column {
@@ -455,14 +464,13 @@ Panel {
 
                     Button {
                         width: (parent.width - parent.spacing) / 2
-                        text: root.shareState === "sharing" ? "Sharing…" : root.shareState === "copied" ? "Copied!" : root.shareState === "error" ? "Error" : "Share latest · S"
+                        text: root.shareState === "copied" ? "Copied!" : root.shareState === "error" ? "Error" : "Share latest · S"
                         iconText: "󰁜"
                         foreground: root.foreground
                         fontFamily: root.fontFamily
                         focusable: true
                         bordered: true
-                        enabled: !shareProcess.running
-                        onClicked: root.shareLatest()
+                        onClicked: root.shareLatest(false)
                     }
                 }
             }
