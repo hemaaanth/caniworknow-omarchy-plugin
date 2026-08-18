@@ -13,6 +13,8 @@ Panel {
     ipcTarget: "caniworknow.status"
 
     readonly property string origin: "https://caniworknow.com"
+    readonly property string curlPath: "/usr/bin/curl"
+    readonly property string clipboardPath: "/usr/bin/wl-copy"
     readonly property int refreshIntervalSec: Math.max(300, Math.min(3600, Number(setting("refreshIntervalSec", 300)) || 300))
     readonly property string iconStyle: normalizedIconStyle(setting("iconStyle", "Thumbs"))
     readonly property color foreground: bar ? bar.foreground : Color.foreground
@@ -137,7 +139,7 @@ Panel {
             return;
         }
 
-        Quickshell.execDetached(["wl-copy", url]);
+        Quickshell.execDetached([clipboardPath, url]);
         finishShare("copied");
     }
 
@@ -200,7 +202,7 @@ Panel {
 
     Process {
         id: statusProcess
-        command: ["curl", "-fsS", "--max-time", "8", "--header", "Accept: application/json", root.origin + "/api/status"]
+        command: [root.curlPath, "-fsS", "--connect-timeout", "4", "--max-time", "12", "--retry", "1", "--retry-all-errors", "--header", "Accept: application/json", root.origin + "/api/status"]
 
         stdout: StdioCollector {
             waitForEnd: true
@@ -208,15 +210,13 @@ Panel {
         }
 
         stderr: StdioCollector {
+            id: statusStderr
             waitForEnd: true
-            onStreamFinished: {
-                if (String(text || "").trim() !== "" && !root.hasKnownStatus)
-                    root.refreshError = "Could not reach caniworknow.com";
-            }
         }
 
         onExited: function (exitCode) {
             if (exitCode !== 0) {
+                console.warn("caniworknow.status refresh failed", exitCode, String(statusStderr.text || "").trim());
                 root.refreshError = "Could not reach caniworknow.com";
                 root.finishRefresh("error");
             }
@@ -225,16 +225,23 @@ Panel {
 
     Process {
         id: shareProcess
-        command: ["curl", "-fsS", "--max-time", "8", "--request", "POST", "--header", "Accept: application/json", "--header", "Content-Type: application/json", "--data", "{}", root.origin + "/api/share"]
+        command: [root.curlPath, "-fsS", "--connect-timeout", "4", "--max-time", "12", "--retry", "1", "--retry-all-errors", "--request", "POST", "--header", "Accept: application/json", "--header", "Content-Type: application/json", "--data", "{}", root.origin + "/api/share"]
 
         stdout: StdioCollector {
             waitForEnd: true
             onStreamFinished: root.applyShare(text)
         }
 
+        stderr: StdioCollector {
+            id: shareStderr
+            waitForEnd: true
+        }
+
         onExited: function (exitCode) {
-            if (exitCode !== 0 && !root.shareCompleted)
+            if (exitCode !== 0 && !root.shareCompleted) {
+                console.warn("caniworknow.status share failed", exitCode, String(shareStderr.text || "").trim());
                 root.finishShare("error");
+            }
         }
     }
 

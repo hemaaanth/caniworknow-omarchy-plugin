@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "caniworknow.status",
   "name": "Can I Work Now?",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Hemanth Soni",
   "description": "The latest caniworknow.com verdict, service details, and share permalink in the Omarchy bar.",
   "kinds": ["bar-widget"],
