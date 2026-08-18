@@ -36,7 +36,7 @@ Panel {
     readonly property bool hasKnownStatus: checkedAt !== "" && services.length > 0
     readonly property string verdictIcon: verdictGlyph(answer)
     readonly property string verdictTitle: answer === "yes" ? "You can work now" : answer === "no" ? "Some services are having trouble" : "Status unavailable"
-    readonly property string verdictLabel: answer === "yes" ? "YES" : answer === "no" ? "NO" : "UNKNOWN"
+    readonly property string verdictLabel: answer === "yes" ? "YES" : answer === "no" ? "NO" : "DUNNO"
     readonly property string checkedLabel: checkedAt === "" ? "No successful check yet" : "Last checked " + formatCheckedAt(checkedAt)
 
     function validStatus(value) {
