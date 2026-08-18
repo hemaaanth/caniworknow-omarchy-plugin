@@ -17,11 +17,11 @@ The widget appears in the right section of the bar by default.
 ## Controls
 
 - Click the bar icon to open or close service details.
-- Right-click the bar icon to copy the latest permalink.
+- Right-click the bar icon to copy the latest permalink and show a confirmation notification.
 - Middle-click the bar icon to refresh.
 - Press `R` in the open panel to refresh and `S` to share.
 
-Refresh and share results appear inside their buttons, without desktop notifications. The automatic refresh interval defaults to five minutes and cannot be set below five minutes.
+Refresh and panel-share results appear inside their buttons, without in-progress flicker or desktop notifications. Right-click sharing uses a notification because the panel is closed and has no visible button feedback. The automatic refresh interval defaults to five minutes and cannot be set below five minutes.
 
 ## Settings
 
