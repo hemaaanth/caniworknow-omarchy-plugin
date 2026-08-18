@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "caniworknow.status",
+  "name": "Can I Work Now?",
+  "version": "1.0.0",
+  "author": "Hemanth Soni",
+  "description": "The latest caniworknow.com verdict, service details, and share permalink in the Omarchy bar.",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "CanIWorkNow.qml"
+  },
+  "barWidget": {
+    "displayName": "Can I Work Now?",
+    "description": "A thumbs-up or thumbs-down for GitHub, Cloudflare, Claude, and Codex, with a detailed popup and immutable sharing.",
+    "category": "Info",
+    "aliases": ["status", "work", "caniworknow"],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "refreshIntervalSec": 300,
+      "iconStyle": "Thumbs"
+    },
+    "schema": [
+      {
+        "key": "refreshIntervalSec",
+        "type": "integer",
+        "label": "Refresh interval (seconds)",
+        "min": 300,
+        "max": 3600,
+        "step": 300,
+        "defaultValue": 300
+      },
+      {
+        "key": "iconStyle",
+        "type": "enum",
+        "label": "Verdict icon",
+        "options": ["Thumbs", "Checks", "Letters"],
+        "defaultValue": "Thumbs",
+        "description": "Choose a monochrome Nerd Font thumb, check/cross, or Y/N letter."
+      }
+    ]
+  }
+}
