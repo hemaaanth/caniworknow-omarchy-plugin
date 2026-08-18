@@ -34,9 +34,9 @@ Open the Omarchy bar widget settings to choose:
 
 The plugin has no install or removal scripts. At runtime it:
 
-- uses `curl` to read `https://caniworknow.com/api/status`;
+- uses Omarchy's system `curl` at `/usr/bin/curl` to read `https://caniworknow.com/api/status`, with one retry for transient failures;
 - posts an empty JSON object to `https://caniworknow.com/api/share` only when you share;
-- uses `wl-copy` to place the returned permalink on your clipboard.
+- uses Omarchy's system `wl-copy` at `/usr/bin/wl-copy` to place the returned permalink on your clipboard.
 
 It does not collect credentials, write configuration, or run a background service outside Omarchy Shell.
 
