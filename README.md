@@ -49,6 +49,14 @@ omarchy plugin remove caniworknow.status
 
 Removal deletes the plugin through Omarchy's plugin manager; no separate cleanup is required.
 
+## Troubleshooting
+
+Omarchy normally reloads the widget after an install or update. If an existing shell instance keeps showing stale status after an update, restart the shell once:
+
+```bash
+omarchy restart shell
+```
+
 ## Development
 
 Validate the repository from its root:
